@@ -25,7 +25,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentNav = 0;
   final List<BottomNavigationBarItem> _navs = [
     const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
     const BottomNavigationBarItem(
@@ -220,9 +219,7 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
-          setState(() {
-            _currentNav = value;
-          });
+          setState(() {});
         },
         items: _navs,
       ),
