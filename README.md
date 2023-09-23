@@ -24,4 +24,8 @@ flutter pub get
 flutter run
 ```
 
-If you like this project, please leave a star 🌟
+TODO:
+
+- [ ] Add tests
+- [ ] Internationalization
+      If you like this project, please leave a star 🌟
