@@ -45,11 +45,9 @@ class _HomeState extends State<Home> {
       firstName: "Baby Girl",
       phone: "0742136231",
     ),
-    // Add more contacts here...
   ];
-  List<Contact> _searchContacts = []; // Updated search results list
+  List<Contact> _searchContacts = [];
 
-  // ... Other widget methods ...
   Widget userProfileCard(Contact user) {
     return GestureDetector(
       onTap: () {
@@ -111,7 +109,7 @@ class _HomeState extends State<Home> {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3),
             ),
           ],
           color: Colors.grey[200],
