@@ -127,8 +127,6 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(left: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '${user.firstName} ${user.lastName}',
@@ -290,7 +288,6 @@ class _HomeState extends State<Home> {
                     );
                   });
             },
-            // if photoUrl is empty, show a placeholder as the leading icon
             icon: contact.photoUrl.isEmpty
                 ? CircleAvatar(
                     radius: 20,
