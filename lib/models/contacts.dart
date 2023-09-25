@@ -21,7 +21,7 @@ class Contact {
     this.photoUrl = '',
   });
 
-  factory Contact.fromJson(Map<String, String> json) {
+  factory Contact.fromJson(Map<String, dynamic> json) {
     return Contact(
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
