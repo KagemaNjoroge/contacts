@@ -25,6 +25,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _currentIndex = 0;
   final List<BottomNavigationBarItem> _navs = [
     const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
     const BottomNavigationBarItem(
@@ -214,8 +215,11 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
         onTap: (value) {
-          setState(() {});
+          setState(() {
+            _currentIndex = value;
+          });
         },
         items: _navs,
       ),
@@ -280,6 +284,12 @@ class _HomeState extends State<Home> {
                                   },
                                   icon: const Icon(Icons.video_call),
                                 ),
+                                IconButton(
+                                  onPressed: () {
+                                    // TODO: Share contact
+                                  },
+                                  icon: const Icon(Icons.share),
+                                )
                               ],
                             ),
                           )
