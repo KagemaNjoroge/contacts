@@ -1,4 +1,9 @@
+import 'package:contacts/firebase_options.dart';
+import 'package:contacts/services/contacts_db.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'models/contacts.dart';
 import 'ui/contact_details_page.dart';
@@ -34,20 +39,12 @@ class _HomeState extends State<Home> {
 
   final Contact _dummyUser = const Contact(
       firstName: "James Njoroge", phone: "0706076039", photoUrl: '');
-  final List<Contact> _contacts = [
-    const Contact(
-        firstName: "James Njoroge",
-        phone: "0706076039",
-        photoUrl:
-            'https://w7.pngwing.com/pngs/770/378/png-transparent-user-profile-icon-contact-information-s-face-head-avatar.png'),
-    const Contact(firstName: "James Njoroge", phone: "0706076039"),
-    const Contact(firstName: "James Njoroge", phone: "0706076039"),
-    const Contact(
-      firstName: "Baby Girl",
-      phone: "0742136231",
-    ),
-  ];
-  List<Contact> _searchContacts = [];
+
+  Future<List<Contact>> _getContacts() async {
+    // database service
+
+    return await ContactDatabaseService().retrieveAllContacts();
+  }
 
   Widget userProfileCard(Contact user) {
     return GestureDetector(
@@ -166,6 +163,15 @@ class _HomeState extends State<Home> {
             },
             icon: const Icon(Icons.add),
           ),
+          IconButton(
+              onPressed: () async {
+                List<Contact> contacts =
+                    await ContactDatabaseService().retrieveAllContacts();
+                for (var cont in contacts) {
+                  print(cont.toJson());
+                }
+              },
+              icon: const Icon(Icons.more_vert))
         ],
       ),
       body: Column(
@@ -185,33 +191,28 @@ class _HomeState extends State<Home> {
               ),
               onChanged: (value) {
                 // Update search results based on the search query
-                setState(() {
-                  _searchContacts = _contacts.where((contact) {
-                    final fullName = '${contact.firstName} ${contact.lastName}'
-                        .toLowerCase();
-                    final phoneNumber = contact.phone.toLowerCase();
-                    return fullName.contains(value.toLowerCase()) ||
-                        phoneNumber.contains(value.toLowerCase());
-                  }).toList();
-                });
+                setState(() {});
               },
             ),
           ),
           userProfileCard(_dummyUser),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchContacts.isEmpty
-                  ? _contacts.length
-                  : _searchContacts.length,
-              itemBuilder: (context, index) {
-                // Use _searchContacts if there are search results, otherwise, use _contacts
-                final contact = _searchContacts.isEmpty
-                    ? _contacts[index]
-                    : _searchContacts[index];
-                return contactTile(contact);
-              },
-            ),
-          ),
+          FutureBuilder(
+            future: _getContacts(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return contactTile(snapshot.data![index]);
+                    },
+                  ),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          )
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -267,14 +268,31 @@ class _HomeState extends State<Home> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 IconButton(
-                                  onPressed: () {
-                                    //TODO: Call contact
+                                  onPressed: () async {
+                                    await FlutterPhoneDirectCaller.callNumber(
+                                        contact.phone);
                                   },
                                   icon: const Icon(Icons.call),
                                 ),
                                 IconButton(
-                                  onPressed: () {
-                                    //TODO: Message contact
+                                  onPressed: () async {
+                                    final Uri smsUri = Uri(
+                                      scheme: 'sms',
+                                      path: contact.phone,
+                                    );
+                                    if (await canLaunchUrl(smsUri)) {
+                                      await launchUrl(smsUri);
+                                    } else {
+                                      // show error dialog
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return const AlertDialog(
+                                                title: Text('Error'),
+                                                content:
+                                                    Text('Could not send SMS'));
+                                          });
+                                    }
                                   },
                                   icon: const Icon(Icons.message),
                                 ),
@@ -331,6 +349,11 @@ class _HomeState extends State<Home> {
   }
 }
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
+  // initialize firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const Application());
 }
