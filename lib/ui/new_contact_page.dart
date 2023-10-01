@@ -1,3 +1,6 @@
+import 'package:contacts/models/contacts.dart';
+import 'package:contacts/services/cloud_storage.dart';
+import 'package:contacts/services/contacts_db.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -23,9 +26,10 @@ class _NewContactPageState extends State<NewContactPage> {
   // form key
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<bool> _uploadImageToFirebase(String filePath) async {
-    //TODO: upload image to firebase
-    return true;
+  Future<String> _uploadImageToFirebase(String filePath, String name) async {
+    String path =
+        await ContactCloudStorageService().uploadImage(filePath, name);
+    return path;
   }
 
   @override
@@ -70,7 +74,7 @@ class _NewContactPageState extends State<NewContactPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 var firstName = _firstNameController.text;
                 var lastName = _lastNameController.text.isEmpty
@@ -90,6 +94,38 @@ class _NewContactPageState extends State<NewContactPage> {
                     : _companyController.text;
                 var email =
                     _emailController.text.isEmpty ? '' : _emailController.text;
+
+                // create contact object
+                Contact contact = Contact(
+                  firstName: firstName,
+                  lastName: lastName,
+                  company: company,
+                  email: email,
+                  phone: phoneNumber,
+                  website: website,
+                  address: address,
+                  notes: notes,
+                  photoUrl: _photoUrl ?? '',
+                );
+                // database service
+                await ContactDatabaseService().insertContact(contact);
+
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          title: const Text('Contact Saved'),
+                          content: const Text(
+                              'Your contact has been saved successfully.'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK')),
+                          ]);
+                    });
               }
             },
             icon: const Icon(
@@ -129,10 +165,15 @@ class _NewContactPageState extends State<NewContactPage> {
                                                   .pickImage(
                                                       source:
                                                           ImageSource.camera);
-                                              setState(() {
-                                                _photoUrl = image!.path;
-                                              });
-                                              print(_photoUrl ?? '');
+                                              if (image != null) {
+                                                var url =
+                                                    await _uploadImageToFirebase(
+                                                        image.path, image.name);
+
+                                                setState(() {
+                                                  _photoUrl = url;
+                                                });
+                                              }
                                             },
                                             child: const Text('Camera')),
                                         TextButton(
@@ -145,17 +186,13 @@ class _NewContactPageState extends State<NewContactPage> {
                                                       source:
                                                           ImageSource.gallery);
                                               if (image != null) {
-                                                setState(() {
-                                                  _photoUrl = image.path;
-                                                });
-                                                bool response =
+                                                var url =
                                                     await _uploadImageToFirebase(
-                                                        image.path);
-                                              } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(const SnackBar(
-                                                        content: Text(
-                                                            'No image selected')));
+                                                        image.path, image.name);
+
+                                                setState(() {
+                                                  _photoUrl = url;
+                                                });
                                               }
                                             },
                                             child: const Text('Gallery')),
