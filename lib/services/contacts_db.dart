@@ -30,7 +30,7 @@ class ContactDatabaseService {
     final Database db = await initializeDatabase();
     await db.insert(
       'contacts',
-      contact.toJson(),
+      contact.toJsonDb(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
