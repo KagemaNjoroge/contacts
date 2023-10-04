@@ -46,94 +46,110 @@ class _ContactDetailsState extends State<ContactDetails> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // validate form
+              if (_formKey.currentState!.validate()) {
+                // update contacts
+
+                Navigator.of(context).pop();
+              }
+            },
             icon: const Icon(Icons.done),
           )
         ],
       ),
-      body: Form(
-          child: Column(
-        key: _formKey,
-        children: [
-          // form fields go here
-          TextFormField(
-            controller: _firstNameController,
-            //initialValue: widget.contact.firstName,
-            decoration: const InputDecoration(
-              labelText: 'First Name',
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a first name';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            //initialValue: widget.contact.lastName,
-            controller: _lastNameController,
-            decoration: const InputDecoration(
-              labelText: 'Last Name',
-            ),
-          ),
-          TextFormField(
-            controller: _phoneController,
-            //initialValue: widget.contact.phone,
-            decoration: const InputDecoration(
-              labelText: 'Phone',
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a phone number';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            //initialValue: widget.contact.company,
-            controller: _companyController,
-            decoration: const InputDecoration(
-              labelText: 'Company',
-            ),
-          ),
-          TextFormField(
-            //initialValue: widget.contact.email,
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-            ),
-          ),
-          TextFormField(
-            //initialValue: widget.contact.website,
-            controller: _websiteController,
-            decoration: const InputDecoration(
-              labelText: 'Website',
-            ),
-          ),
-          TextFormField(
-            //initialValue: widget.contact.address,
-            controller: _addressController,
-            decoration: const InputDecoration(
-              labelText: 'Address',
-            ),
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // form fields go here
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(widget.contact.photoUrl),
+                    radius: 40,
+                  ),
+                  TextFormField(
+                    controller: _firstNameController,
+                    //initialValue: widget.contact.firstName,
+                    decoration: const InputDecoration(
+                      labelText: 'First Name',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a first name';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    //initialValue: widget.contact.lastName,
+                    controller: _lastNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Last Name',
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _phoneController,
+                    //initialValue: widget.contact.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Phone',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a phone number';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    //initialValue: widget.contact.company,
+                    controller: _companyController,
+                    decoration: const InputDecoration(
+                      labelText: 'Company',
+                    ),
+                  ),
+                  TextFormField(
+                    //initialValue: widget.contact.email,
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                    ),
+                  ),
+                  TextFormField(
+                    //initialValue: widget.contact.website,
+                    controller: _websiteController,
+                    decoration: const InputDecoration(
+                      labelText: 'Website',
+                    ),
+                  ),
+                  TextFormField(
+                    //initialValue: widget.contact.address,
+                    controller: _addressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Address',
+                    ),
+                  ),
 
-          TextFormField(
-            //initialValue: widget.contact.notes,
-            controller: _notesController,
-            decoration: const InputDecoration(
-              labelText: 'Notes',
-            ),
-          ),
-          TextFormField(
-            initialValue: widget.contact.photoUrl,
-            //controller: _photoUrlController,
-            decoration: const InputDecoration(
-              labelText: 'Photo URL',
-            ),
-          ),
-        ],
-      )),
+                  TextFormField(
+                    //initialValue: widget.contact.notes,
+                    controller: _notesController,
+                    decoration: const InputDecoration(
+                      labelText: 'Notes',
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: widget.contact.photoUrl,
+                    //controller: _photoUrlController,
+                    decoration: const InputDecoration(
+                      labelText: 'Photo URL',
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
