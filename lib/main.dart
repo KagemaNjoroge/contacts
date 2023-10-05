@@ -1,10 +1,9 @@
-import 'package:contacts/firebase_options.dart';
 import 'package:contacts/services/contacts_db.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'ideas/home.dart';
 import 'models/contacts.dart';
 import 'ui/contact_details_page.dart';
 import 'ui/new_contact_page.dart';
@@ -16,7 +15,7 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Home(),
+      home: const IdeaPage(),
       theme: ThemeData(useMaterial3: true),
     );
   }
@@ -351,9 +350,9 @@ class _HomeState extends State<Home> {
 
 Future<void> main(List<String> args) async {
   // initialize firebase
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  //WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const Application());
 }
